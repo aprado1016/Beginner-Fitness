@@ -223,16 +223,19 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* --vh is measured directly in JS (see index.html) as the full real viewport height in px, kept
+   in sync on resize/orientation/pageshow. iOS WKWebView doesn't reliably resolve `dvh` to the
+   true visible viewport on a cold, non-scrolling page — short pages could end up sized against a
+   stale, smaller value, leaving a gap below fixed bottom chrome and an incompletely-covered
+   background until something (real overflow, a scroll) forced a recalculation. A JS-measured
+   pixel value has no such quirk; 100dvh is only a same-unit fallback for the instant before that
+   script runs (--vh already holds the full height, not 1% of it — no *100 here). */
 html {
-  /* dvh (not %, which resolves against iOS Safari's toolbar-expanded "large" viewport on cold
-     load) keeps this locked to the actual visible viewport from the first frame — otherwise the
-     document is briefly taller than what's on screen, leaving a gap below fixed bottom chrome
-     until the toolbar collapses (e.g. on the first scroll) and the two catch up to each other. */
-  height: 100dvh;
+  height: var(--vh, 100dvh);
 }
 
 body {
-  min-height: 100dvh;
+  min-height: var(--vh, 100dvh);
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   color: rgb(var(--c-text-body));
@@ -247,17 +250,20 @@ body {
    no matter how far the bounce stretches. This is a real element declared directly in
    index.html (not a CSS ::before) — generated pseudo-elements have been unreliable getting
    promoted to their own compositor layer for position: fixed on the very first frame in iOS
-   Safari/WKWebView, which is exactly what left a gap between this layer and fixed chrome like
-   the bottom nav on cold load. A real, static DOM node doesn't have that timing gap. */
+   Safari/WKWebView. Sized with the same measured --vh as everything else, rather than inset: 0,
+   so it can't end up smaller than the true screen either. */
 #app-bg {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--vh, 100dvh);
   z-index: -1;
   background: var(--page-bg);
 }
 
 #root {
-  min-height: 100dvh;
+  min-height: var(--vh, 100dvh);
   display: flex;
   flex-direction: column;
 }

@@ -30,7 +30,7 @@ export function ProgressScreen() {
 
   if (completed.length === 0) {
     return (
-      <div className="animate-fade-in flex min-h-[70dvh] flex-col items-center justify-center px-6 text-center">
+      <div className="animate-fade-in flex min-h-[calc(var(--vh,100dvh)*0.7)] flex-col items-center justify-center px-6 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-softer">
           <ChartIcon className="h-7 w-7 text-fg-brand-strong" />
         </div>
