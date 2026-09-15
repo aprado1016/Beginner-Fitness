@@ -240,18 +240,22 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   color: rgb(var(--c-text-body));
   -webkit-font-smoothing: antialiased;
+  position: relative;
+  /* Fallback layer, painted directly on body (not fixed) — always sized to the real document,
+     since normal document flow height doesn't suffer from the position: fixed viewport-timing
+     quirk #app-bg below can hit. In the ordinary case this sits exactly under #app-bg and is
+     never seen. If #app-bg is ever a sliver short, this shows through in that gap: the same
+     gradient, not blank white. It does bounce/scroll with the document (unlike #app-bg), but
+     since it's normally fully hidden behind #app-bg's static layer, that only becomes visible
+     in the same edge-case gap it's there to cover — never as a second, competing background. */
+  background: var(--page-bg);
 }
 
-/* The page gradient lives ONLY here, on a position: fixed layer pinned to the viewport —
-   not on html/body directly. html/body are what elastic overscroll (iOS Safari "bounce")
-   translates, so a background painted on them would bounce right along with the content,
-   drifting out of sync with this fixed layer. Keeping it in one place means the gradient
-   reads as a static backdrop: content and cards bounce freely over it, and it never runs out
-   no matter how far the bounce stretches. This is a real element declared directly in
-   index.html (not a CSS ::before) — generated pseudo-elements have been unreliable getting
-   promoted to their own compositor layer for position: fixed on the very first frame in iOS
-   Safari/WKWebView. Sized with the same measured --vh as everything else, rather than inset: 0,
-   so it can't end up smaller than the true screen either. */
+/* The gradient's primary, static layer — a real element declared directly in index.html (not a
+   CSS ::before: generated pseudo-elements have been unreliable getting promoted to their own
+   compositor layer for position: fixed on the very first frame in iOS Safari/WKWebView), pinned
+   to the viewport so content and cards can bounce freely over a backdrop that itself never
+   moves. Sits in front of (paints over) body's own fallback gradient above. */
 #app-bg {
   position: fixed;
   top: 0;
