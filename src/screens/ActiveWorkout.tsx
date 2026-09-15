@@ -171,12 +171,12 @@ export function ActiveWorkout() {
             </button>
             <SegmentedProgressBar total={totalSets} completed={completedSets} className="flex-1" />
           </div>
+          {showRest && (
+            <div className="px-4 pb-2.5">
+              <RestTimer key={restKey} onDismiss={() => setShowRest(false)} />
+            </div>
+          )}
         </div>
-        {showRest && (
-          <div className="border-b border-glass bg-glass px-4 py-2.5 backdrop-blur-glass">
-            <RestTimer key={restKey} onDismiss={() => setShowRest(false)} />
-          </div>
-        )}
       </div>
 
       {/* Scrollable content */}

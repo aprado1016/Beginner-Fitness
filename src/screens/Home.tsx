@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAppState } from '@/state/AppStateContext'
 import { WORKOUTS } from '@/data/workouts'
 import { getNextWorkout, wasCompletedToday } from '@/lib/workoutStats'
@@ -47,7 +47,11 @@ export function Home() {
 
         <GlassCard padding="lg" className="relative">
           {completedToday && !isResuming ? (
-            <CompletedTodayState workoutFocus={todaysWorkout.focus} dayLabel={todaysWorkout.name} />
+            <CompletedTodayState
+              workoutFocus={todaysWorkout.focus}
+              dayLabel={todaysWorkout.name}
+              onDoAgain={handleStart}
+            />
           ) : (
             <>
               <div className="flex items-start justify-between gap-2">
@@ -104,7 +108,15 @@ export function Home() {
   )
 }
 
-function CompletedTodayState({ workoutFocus, dayLabel }: { workoutFocus: string; dayLabel: string }) {
+function CompletedTodayState({
+  workoutFocus,
+  dayLabel,
+  onDoAgain,
+}: {
+  workoutFocus: string
+  dayLabel: string
+  onDoAgain: () => void
+}) {
   return (
     <div className="flex flex-col items-center py-4 text-center">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-success-soft">
@@ -114,9 +126,12 @@ function CompletedTodayState({ workoutFocus, dayLabel }: { workoutFocus: string;
       <p className="mt-1 text-sm text-body-subtle">
         You completed {dayLabel} — {workoutFocus}. Rest up, your next workout will be ready tomorrow.
       </p>
-      <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-fg-brand">
+      <Button size="base" variant="secondary" className="mt-4" onClick={onDoAgain}>
+        Do it again
+      </Button>
+      <Link to="/progress" className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-fg-brand">
         View it in Progress <ChevronRightIcon className="h-3.5 w-3.5" />
-      </span>
+      </Link>
     </div>
   )
 }
