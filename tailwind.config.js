@@ -1,0 +1,110 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: ['class', '[data-theme="dark"]'],
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', 'system-ui', 'sans-serif'],
+      },
+      colors: {
+        neutral: {
+          'primary-soft': 'rgb(var(--c-neutral-primary-soft) / <alpha-value>)',
+          primary: 'rgb(var(--c-neutral-primary) / <alpha-value>)',
+          'primary-medium': 'rgb(var(--c-neutral-primary-medium) / <alpha-value>)',
+          'primary-strong': 'rgb(var(--c-neutral-primary-strong) / <alpha-value>)',
+          'secondary-soft': 'rgb(var(--c-neutral-secondary-soft) / <alpha-value>)',
+          secondary: 'rgb(var(--c-neutral-secondary) / <alpha-value>)',
+          'secondary-medium': 'rgb(var(--c-neutral-secondary-medium) / <alpha-value>)',
+          'tertiary-soft': 'rgb(var(--c-neutral-tertiary-soft) / <alpha-value>)',
+          tertiary: 'rgb(var(--c-neutral-tertiary) / <alpha-value>)',
+          'tertiary-medium': 'rgb(var(--c-neutral-tertiary-medium) / <alpha-value>)',
+          quaternary: 'rgb(var(--c-neutral-quaternary) / <alpha-value>)',
+        },
+        brand: {
+          softer: 'rgb(var(--c-brand-softer) / <alpha-value>)',
+          soft: 'rgb(var(--c-brand-soft) / <alpha-value>)',
+          DEFAULT: 'rgb(var(--c-brand) / <alpha-value>)',
+          strong: 'rgb(var(--c-brand-strong) / <alpha-value>)',
+        },
+        success: {
+          soft: 'rgb(var(--c-success-soft) / <alpha-value>)',
+          DEFAULT: 'rgb(var(--c-success) / <alpha-value>)',
+          medium: 'rgb(var(--c-success-medium) / <alpha-value>)',
+          strong: 'rgb(var(--c-success-strong) / <alpha-value>)',
+        },
+        danger: {
+          soft: 'rgb(var(--c-danger-soft) / <alpha-value>)',
+          DEFAULT: 'rgb(var(--c-danger) / <alpha-value>)',
+          medium: 'rgb(var(--c-danger-medium) / <alpha-value>)',
+          strong: 'rgb(var(--c-danger-strong) / <alpha-value>)',
+        },
+        warning: {
+          soft: 'rgb(var(--c-warning-soft) / <alpha-value>)',
+          DEFAULT: 'rgb(var(--c-warning) / <alpha-value>)',
+          medium: 'rgb(var(--c-warning-medium) / <alpha-value>)',
+          strong: 'rgb(var(--c-warning-strong) / <alpha-value>)',
+        },
+        heading: 'rgb(var(--c-text-heading) / <alpha-value>)',
+        body: 'rgb(var(--c-text-body) / <alpha-value>)',
+        'body-subtle': 'rgb(var(--c-text-body-subtle) / <alpha-value>)',
+        'fg-brand': 'rgb(var(--c-fg-brand) / <alpha-value>)',
+        'fg-brand-strong': 'rgb(var(--c-fg-brand-strong) / <alpha-value>)',
+        'fg-disabled': 'rgb(var(--c-fg-disabled) / <alpha-value>)',
+        border: {
+          default: 'rgb(var(--c-border-default) / <alpha-value>)',
+          'default-medium': 'rgb(var(--c-border-default-medium) / <alpha-value>)',
+          light: 'rgb(var(--c-border-light) / <alpha-value>)',
+          brand: 'rgb(var(--c-border-brand) / <alpha-value>)',
+        },
+        disabled: 'rgb(var(--c-disabled) / <alpha-value>)',
+      },
+      backgroundColor: {
+        glass: 'var(--glass-bg)',
+        'glass-hover': 'var(--glass-bg-hover)',
+      },
+      borderColor: {
+        glass: 'var(--glass-border)',
+        'glass-subtle': 'var(--glass-border-subtle)',
+      },
+      borderRadius: {
+        base: '20px',
+        control: '12px',
+        sm: '8px',
+      },
+      boxShadow: {
+        '2xs': 'var(--shadow-2xs)',
+        xs: 'var(--shadow-xs)',
+        sm: 'var(--shadow-sm)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
+        xl: 'var(--shadow-xl)',
+        glass: 'var(--glass-shadow)',
+      },
+      backdropBlur: {
+        glass: '20px',
+      },
+      spacing: {
+        'safe-t': 'env(safe-area-inset-top, 0px)',
+        'safe-b': 'env(safe-area-inset-bottom, 0px)',
+      },
+      animation: {
+        'fade-in': 'fadeIn 240ms ease-out both',
+        'rise-in': 'riseIn 280ms cubic-bezier(0.16, 1, 0.3, 1) both',
+        'pop': 'pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        'check-draw': 'checkDraw 320ms ease-out forwards',
+        'ring-pulse': 'ringPulse 1.6s ease-in-out infinite',
+        'confetti-fall': 'confettiFall 1.8s ease-in forwards',
+      },
+      keyframes: {
+        fadeIn: { from: { opacity: 0 }, to: { opacity: 1 } },
+        riseIn: { from: { opacity: 0, transform: 'translateY(12px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+        pop: { '0%': { transform: 'scale(0.85)', opacity: 0 }, '60%': { transform: 'scale(1.04)', opacity: 1 }, '100%': { transform: 'scale(1)' } },
+        checkDraw: { from: { strokeDashoffset: 24 }, to: { strokeDashoffset: 0 } },
+        ringPulse: { '0%, 100%': { opacity: 0.5 }, '50%': { opacity: 1 } },
+        confettiFall: { from: { transform: 'translateY(-10px) rotate(0deg)', opacity: 1 }, to: { transform: 'translateY(120px) rotate(200deg)', opacity: 0 } },
+      },
+    },
+  },
+  plugins: [],
+}
