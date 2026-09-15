@@ -225,26 +225,25 @@
 
 html {
   height: 100%;
-  background: var(--page-bg);
 }
 
 body {
   min-height: 100%;
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
-  background: var(--page-bg);
   color: rgb(var(--c-text-body));
   -webkit-font-smoothing: antialiased;
   position: relative;
 }
 
-/* Elastic overscroll (iOS Safari "bounce") translates the whole viewport past the document's
-   own edges, revealing blank canvas beyond any element's painted box — html/body's own
-   background doesn't cover that, since it's bounded to the document, not the viewport.
-   A position: fixed layer stays pinned to the viewport regardless of how far the bounce
-   stretches, so it covers that gap. (background-attachment: fixed would do the same thing,
-   but iOS Safari sometimes fails to paint that on the very first frame — a real fixed element
-   doesn't have that bug.) */
+/* The page gradient lives ONLY here, on a position: fixed layer pinned to the viewport —
+   not on html/body directly. html/body are what elastic overscroll (iOS Safari "bounce")
+   translates, so a background painted on them would bounce right along with the content,
+   drifting out of sync with this fixed layer. Keeping it in one place means the gradient
+   reads as a static backdrop: content and cards bounce freely over it, and it never runs out
+   no matter how far the bounce stretches. (background-attachment: fixed would achieve the same
+   pinning, but iOS Safari sometimes fails to paint that on the very first frame — a real fixed
+   element doesn't have that bug.) */
 body::before {
   content: '';
   position: fixed;
