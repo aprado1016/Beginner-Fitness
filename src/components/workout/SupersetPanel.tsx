@@ -72,12 +72,9 @@ export function SupersetPanel({
 
           return (
             <div key={exercise.id} className="py-4">
-              <div className="flex items-center gap-3">
-                <div className="w-16 flex-shrink-0">
-                  <ExerciseMedia media={exercise.media} exerciseName={exercise.name} size="md" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-semibold text-heading">{exercise.name}</h3>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="truncate text-base font-semibold text-heading">{exercise.name}</h3>
                   {exercise.shortName && <p className="text-xs text-body-subtle">{exercise.shortName}</p>}
                   {last && (
                     <p className="mt-0.5 text-xs font-medium text-fg-brand-strong">
@@ -86,10 +83,14 @@ export function SupersetPanel({
                   )}
                 </div>
                 {i < exercises.length - 1 && (
-                  <span aria-hidden className="text-lg text-body-subtle">
+                  <span aria-hidden className="flex-shrink-0 text-lg text-body-subtle">
                     ↓
                   </span>
                 )}
+              </div>
+
+              <div className="mt-2.5">
+                <ExerciseMedia media={exercise.media} exerciseName={exercise.name} size="lg" />
               </div>
 
               <div className="mt-3">

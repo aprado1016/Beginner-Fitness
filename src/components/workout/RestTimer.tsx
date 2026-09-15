@@ -66,7 +66,7 @@ export function RestTimer({ seconds = 60, onDismiss }: RestTimerProps) {
             }}
             className="min-h-9 rounded-control border border-border-default-medium bg-neutral-secondary-medium px-2.5 text-xs font-medium text-body transition-colors hover:bg-neutral-tertiary-medium hover:text-heading"
           >
-            +15 sec
+            +15
           </button>
           <button
             type="button"

@@ -12,24 +12,24 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="glass-edges sticky bottom-0 z-30 border-t border-glass bg-glass pb-[max(env(safe-area-inset-bottom,0px),10px)] pt-2 backdrop-blur-glass"
+      className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[max(env(safe-area-inset-bottom,0px),1rem)]"
     >
-      <ul className="mx-auto flex max-w-md items-stretch justify-around px-2">
+      <ul className="glass-edges flex items-stretch gap-1 rounded-full border border-glass bg-glass p-1.5 shadow-glass backdrop-blur-glass">
         {ITEMS.map(({ to, label, Icon, FilledIcon, end }) => (
-          <li key={to} className="flex-1">
+          <li key={to}>
             <NavLink
               to={to}
               end={end}
               className={({ isActive }) =>
                 clsx(
-                  'flex min-h-11 flex-col items-center justify-center gap-1 rounded-control px-3 py-1.5 text-[11px] font-medium transition-colors',
-                  isActive ? 'text-fg-brand' : 'text-body-subtle hover:text-heading',
+                  'flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 text-[11px] font-medium transition-colors',
+                  isActive ? 'bg-brand text-white shadow-xs' : 'text-body-subtle hover:text-heading',
                 )
               }
             >
               {({ isActive }) => (
                 <>
-                  {isActive ? <FilledIcon className="h-6 w-6" /> : <Icon className="h-6 w-6" />}
+                  {isActive ? <FilledIcon className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
                   <span className={isActive ? 'font-semibold' : ''}>{label}</span>
                 </>
               )}

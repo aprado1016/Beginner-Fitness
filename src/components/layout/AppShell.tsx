@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { BottomNav } from './BottomNav'
 import { useTheme } from '@/hooks/useTheme'
+import { clsx } from '@/lib/clsx'
 
 const IMMERSIVE_PREFIXES = ['/workout/active', '/workout/complete']
 
@@ -17,7 +18,18 @@ export function AppShell() {
       >
         Skip to main content
       </a>
-      <main id="main-content" className="flex-1 pb-4 pt-[max(env(safe-area-inset-top,0px),0px)]">
+      <main
+        id="main-content"
+        className={clsx(
+          'flex-1',
+          // Immersive screens (active workout) manage their own fixed top/bottom chrome and
+          // safe-area padding internally, so this wrapper adds none — doing so twice just
+          // pushes content down for no reason.
+          !isImmersive && 'pt-[max(env(safe-area-inset-top,0px),0px)]',
+          // The pill nav is fixed (not in document flow), so reserve room for it here instead.
+          !isImmersive && 'pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]',
+        )}
+      >
         <Outlet />
       </main>
       {!isImmersive && <BottomNav />}
