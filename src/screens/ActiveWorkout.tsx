@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type TouchEvent } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useAppState } from '@/state/AppStateContext'
 import { toSteps } from '@/data/workouts'
 import { ExerciseCard } from '@/components/workout/ExerciseCard'
@@ -8,10 +9,14 @@ import { RestTimer } from '@/components/workout/RestTimer'
 import { SegmentedProgressBar } from '@/components/ui/SegmentedProgressBar'
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '@/components/icons'
 import { clsx } from '@/lib/clsx'
+import { useHorizontalSwipe } from '@/hooks/useHorizontalSwipe'
 import type { ExerciseSession } from '@/types'
 
-const SWIPE_DISTANCE_THRESHOLD = 55
-const SWIPE_DIRECTION_RATIO = 1.4
+const slideVariants = {
+  enter: (dir: number) => ({ x: dir > 0 ? 48 : -48, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: number) => ({ x: dir > 0 ? -48 : 48, opacity: 0 }),
+}
 
 export function ActiveWorkout() {
   const navigate = useNavigate()
@@ -19,15 +24,16 @@ export function ActiveWorkout() {
 
   const steps = useMemo(() => (activeWorkout ? toSteps(activeWorkout) : []), [activeWorkout])
   const [stepIndex, setStepIndex] = useState(0)
+  const [direction, setDirection] = useState(1)
   const [showRest, setShowRest] = useState(false)
   const [restKey, setRestKey] = useState(0)
   const completedRef = useRef(false)
+  const lastCheckedRef = useRef<{ index: number; complete: boolean }>({ index: -1, complete: false })
 
   const topStackRef = useRef<HTMLDivElement>(null)
   const bottomStackRef = useRef<HTMLDivElement>(null)
   const [topOffset, setTopOffset] = useState(64)
   const [bottomOffset, setBottomOffset] = useState(96)
-  const touchStart = useRef<{ x: number; y: number } | null>(null)
 
   useEffect(() => {
     if (!activeSession || !activeWorkout) {
@@ -81,15 +87,26 @@ export function ActiveWorkout() {
     return step.exercises.every((ex) => sessionsByExerciseId[ex.id]?.sets.every((s) => s.completed))
   }
 
-  // Auto-advance to the first incomplete step whenever it changes underneath us.
+  // Auto-advance to the next step, but only when the step we're CURRENTLY viewing just became
+  // complete — not merely because stepIndex now points at some already-completed step (e.g. the
+  // user manually navigated back to review it). Tracking {index, complete} together is what makes
+  // that distinction: a stepIndex change alone updates the baseline without ever counting as "just
+  // completed here".
   useEffect(() => {
     if (steps.length === 0) return
-    if (isStepComplete(stepIndex)) {
-      const next = steps.findIndex((_, i) => i >= stepIndex && !isStepComplete(i))
-      if (next !== -1 && next !== stepIndex) {
-        const t = window.setTimeout(() => setStepIndex(next), 550)
-        return () => window.clearTimeout(t)
-      }
+    const currentlyComplete = isStepComplete(stepIndex)
+    const last = lastCheckedRef.current
+    const justCompletedHere = last.index === stepIndex && currentlyComplete && !last.complete
+    lastCheckedRef.current = { index: stepIndex, complete: currentlyComplete }
+
+    if (!justCompletedHere) return
+    const next = steps.findIndex((_, i) => i >= stepIndex && !isStepComplete(i))
+    if (next !== -1 && next !== stepIndex) {
+      const t = window.setTimeout(() => {
+        setDirection(1)
+        setStepIndex(next)
+      }, 550)
+      return () => window.clearTimeout(t)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionsByExerciseId, stepIndex, steps.length])
@@ -103,6 +120,16 @@ export function ActiveWorkout() {
       window.setTimeout(() => navigate('/workout/complete', { replace: true }), 500)
     }
   }, [completedSets, totalSets, activeSession, completeSession, navigate])
+
+  const goToStep = (index: number, dir: number) => {
+    const clamped = Math.max(0, Math.min(steps.length - 1, index))
+    if (clamped === stepIndex) return
+    setDirection(dir)
+    setStepIndex(clamped)
+  }
+  const goPrev = () => goToStep(stepIndex - 1, -1)
+  const goNext = () => goToStep(stepIndex + 1, 1)
+  const swipeHandlers = useHorizontalSwipe({ onSwipeLeft: goNext, onSwipeRight: goPrev })
 
   if (!activeSession || !activeWorkout || steps.length === 0) return null
 
@@ -118,25 +145,11 @@ export function ActiveWorkout() {
     setShowRest(true)
   }
 
-  const goToStep = (index: number) => setStepIndex(Math.max(0, Math.min(steps.length - 1, index)))
-  const goPrev = () => goToStep(stepIndex - 1)
-  const goNext = () => goToStep(stepIndex + 1)
-
-  const handleTouchStart = (e: TouchEvent) => {
-    const t = e.touches[0]
-    touchStart.current = { x: t.clientX, y: t.clientY }
-  }
-  const handleTouchEnd = (e: TouchEvent) => {
-    const start = touchStart.current
-    touchStart.current = null
-    if (!start) return
-    const t = e.changedTouches[0]
-    const dx = t.clientX - start.x
-    const dy = t.clientY - start.y
-    if (Math.abs(dx) < SWIPE_DISTANCE_THRESHOLD) return
-    if (Math.abs(dx) < Math.abs(dy) * SWIPE_DIRECTION_RATIO) return
-    if (dx < 0) goNext()
-    else goPrev()
+  // Un-completing a set (tapping it back off) means resting no longer makes sense — don't leave
+  // a stale rest timer running for a set that's no longer marked done.
+  const handleToggleResult = (nowComplete: boolean) => {
+    if (nowComplete) triggerRest()
+    else setShowRest(false)
   }
 
   return (
@@ -168,54 +181,64 @@ export function ActiveWorkout() {
 
       {/* Scrollable content */}
       <div
-        className="px-4"
+        className="relative overflow-hidden px-4"
         style={{
           paddingTop: topOffset + 16,
           paddingBottom: bottomOffset + 16,
           transition: 'padding-top 200ms ease, padding-bottom 200ms ease',
         }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
+        onTouchStart={swipeHandlers.onTouchStart}
+        onTouchEnd={swipeHandlers.onTouchEnd}
       >
-        <div key={step.type === 'single' ? step.exercise.id : step.groupId} className="animate-rise-in">
-          {step.type === 'single' ? (
-            <ExerciseCard
-              exercise={step.exercise}
-              session={sessionsByExerciseId[step.exercise.id]}
-              lastPerformance={lastPerformance(step.exercise.id)}
-              onToggleSet={(setIndex) => {
-                const set = sessionsByExerciseId[step.exercise.id].sets[setIndex]
-                const nowComplete = !set.completed
-                logSet(step.exercise.id, setIndex, { completed: nowComplete })
-                if (nowComplete) triggerRest()
-              }}
-              onChangeWeight={(setIndex, w) => logSet(step.exercise.id, setIndex, { actualWeight: w })}
-              onChangeReps={(setIndex, r) => logSet(step.exercise.id, setIndex, { actualReps: r })}
-              onCompleteWithDuration={(setIndex, d) => {
-                logSet(step.exercise.id, setIndex, { completed: true, actualDurationSeconds: d })
-                triggerRest()
-              }}
-            />
-          ) : (
-            <SupersetPanel
-              exercises={step.exercises}
-              sessionsByExerciseId={sessionsByExerciseId}
-              lastPerformances={Object.fromEntries(step.exercises.map((e) => [e.id, lastPerformance(e.id)]))}
-              onToggleSet={(exerciseId, setIndex) => {
-                const set = sessionsByExerciseId[exerciseId].sets[setIndex]
-                const nowComplete = !set.completed
-                logSet(exerciseId, setIndex, { completed: nowComplete })
-                if (nowComplete) triggerRest()
-              }}
-              onChangeWeight={(exerciseId, setIndex, w) => logSet(exerciseId, setIndex, { actualWeight: w })}
-              onChangeReps={(exerciseId, setIndex, r) => logSet(exerciseId, setIndex, { actualReps: r })}
-              onCompleteWithDuration={(exerciseId, setIndex, d) => {
-                logSet(exerciseId, setIndex, { completed: true, actualDurationSeconds: d })
-                triggerRest()
-              }}
-            />
-          )}
-        </div>
+        <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+          <motion.div
+            key={step.type === 'single' ? step.exercise.id : step.groupId}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: 'spring', stiffness: 340, damping: 32, mass: 0.7 }}
+          >
+            {step.type === 'single' ? (
+              <ExerciseCard
+                exercise={step.exercise}
+                session={sessionsByExerciseId[step.exercise.id]}
+                lastPerformance={lastPerformance(step.exercise.id)}
+                onToggleSet={(setIndex) => {
+                  const set = sessionsByExerciseId[step.exercise.id].sets[setIndex]
+                  const nowComplete = !set.completed
+                  logSet(step.exercise.id, setIndex, { completed: nowComplete })
+                  handleToggleResult(nowComplete)
+                }}
+                onChangeWeight={(setIndex, w) => logSet(step.exercise.id, setIndex, { actualWeight: w })}
+                onChangeReps={(setIndex, r) => logSet(step.exercise.id, setIndex, { actualReps: r })}
+                onCompleteWithDuration={(setIndex, d) => {
+                  logSet(step.exercise.id, setIndex, { completed: true, actualDurationSeconds: d })
+                  triggerRest()
+                }}
+              />
+            ) : (
+              <SupersetPanel
+                exercises={step.exercises}
+                sessionsByExerciseId={sessionsByExerciseId}
+                lastPerformances={Object.fromEntries(step.exercises.map((e) => [e.id, lastPerformance(e.id)]))}
+                onToggleSet={(exerciseId, setIndex) => {
+                  const set = sessionsByExerciseId[exerciseId].sets[setIndex]
+                  const nowComplete = !set.completed
+                  logSet(exerciseId, setIndex, { completed: nowComplete })
+                  handleToggleResult(nowComplete)
+                }}
+                onChangeWeight={(exerciseId, setIndex, w) => logSet(exerciseId, setIndex, { actualWeight: w })}
+                onChangeReps={(exerciseId, setIndex, r) => logSet(exerciseId, setIndex, { actualReps: r })}
+                onCompleteWithDuration={(exerciseId, setIndex, d) => {
+                  logSet(exerciseId, setIndex, { completed: true, actualDurationSeconds: d })
+                  triggerRest()
+                }}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Fixed bottom pill: prev/next + day/exercise label + step dots. Always visible, above scroll. */}

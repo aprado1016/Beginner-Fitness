@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { ChartFilledIcon, ChartIcon, DumbbellFilledIcon, DumbbellIcon, HomeFilledIcon, HomeIcon } from '@/components/icons'
 import { clsx } from '@/lib/clsx'
 
@@ -20,17 +21,26 @@ export function BottomNav() {
             <NavLink
               to={to}
               end={end}
-              className={({ isActive }) =>
-                clsx(
-                  'flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 text-[11px] font-medium transition-colors',
-                  isActive ? 'bg-brand text-white shadow-xs' : 'text-body-subtle hover:text-heading',
-                )
-              }
+              className="relative flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 text-[11px] font-medium"
             >
               {({ isActive }) => (
                 <>
-                  {isActive ? <FilledIcon className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
-                  <span className={isActive ? 'font-semibold' : ''}>{label}</span>
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-bubble"
+                      className="absolute inset-0 rounded-full bg-brand shadow-xs"
+                      transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+                    />
+                  )}
+                  <span
+                    className={clsx(
+                      'relative z-10 flex items-center gap-1.5 transition-colors',
+                      isActive ? 'text-white' : 'text-body-subtle hover:text-heading',
+                    )}
+                  >
+                    {isActive ? <FilledIcon className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
+                    <span className={isActive ? 'font-semibold' : ''}>{label}</span>
+                  </span>
                 </>
               )}
             </NavLink>

@@ -225,6 +225,10 @@
 
 html {
   height: 100%;
+  /* Elastic overscroll (iOS Safari "bounce") reveals whatever is behind the body — without
+     this, that's the browser canvas default (white), not the app's gradient. */
+  background: var(--page-bg);
+  overscroll-behavior-y: none;
 }
 
 body {

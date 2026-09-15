@@ -4,16 +4,18 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { ExerciseMedia } from '@/components/workout/ExerciseMedia'
-import { ChevronLeftIcon, ClockIcon, DumbbellIcon } from '@/components/icons'
+import { ClockIcon, DumbbellIcon } from '@/components/icons'
 import { formatMinutes } from '@/lib/format'
 import { formatSetTarget } from '@/components/workout/SetRow'
 import { useAppState } from '@/state/AppStateContext'
+import { useHorizontalSwipe } from '@/hooks/useHorizontalSwipe'
 import { clsx } from '@/lib/clsx'
 
 export function WorkoutPreview() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const { resumeOrStartSession } = useAppState()
+  const swipeHandlers = useHorizontalSwipe({ onSwipeRight: () => navigate(-1) })
 
   const workout = WORKOUTS.find((w) => w.slug === slug)
 
@@ -34,15 +36,11 @@ export function WorkoutPreview() {
   }
 
   return (
-    <div className="animate-fade-in px-4 pt-5">
-      <button
-        type="button"
-        onClick={() => navigate(-1)}
-        className="mb-3 -ml-2 flex min-h-11 items-center gap-1 rounded-control px-2 text-sm font-medium text-body-subtle hover:text-heading"
-      >
-        <ChevronLeftIcon className="h-4 w-4" /> Back
-      </button>
-
+    <div
+      className="animate-fade-in px-4 pt-5"
+      onTouchStart={swipeHandlers.onTouchStart}
+      onTouchEnd={swipeHandlers.onTouchEnd}
+    >
       <p className="text-xs font-semibold uppercase tracking-wide text-fg-brand-emphasis">{workout.name}</p>
       <h1 className="text-2xl font-semibold text-heading">{workout.focus}</h1>
       <div className="mt-2 flex flex-wrap gap-2">
@@ -83,7 +81,7 @@ export function WorkoutPreview() {
         })}
       </GlassCard>
 
-      <div className="sticky bottom-3 mt-6 pb-2">
+      <div className="sticky bottom-[5.5rem] mt-6 pb-2">
         <Button size="xl" fullWidth onClick={handleStart}>
           Start Workout
         </Button>
