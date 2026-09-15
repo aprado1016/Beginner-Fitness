@@ -1,7 +1,8 @@
-import type { Exercise, Workout } from '@/types'
+import type { Exercise, ExerciseMedia, Workout } from '@/types'
 import { getRawRows, rowsToObjects } from './sheetSource'
 import { parseNotesCell, parseRepsCell, parseSetsCell, parseWeightCell, splitDisplayName } from './parseSheet'
 import { getExerciseContent } from './exerciseContent'
+import { getExercisePhoto } from './exerciseMedia'
 import { slugify } from '@/lib/id'
 
 // -----------------------------------------------------------------------------
@@ -34,8 +35,10 @@ function buildWorkouts(): Workout[] {
       const notes = parseNotesCell(row.notes)
       const content = getExerciseContent(name)
 
+      const id = `${slugify(dayLabel)}__${slugify(name)}`
+
       const exercise: Exercise = {
-        id: `${slugify(dayLabel)}__${slugify(name)}`,
+        id,
         name,
         shortName,
         sets: parseSetsCell(row.sets),
@@ -43,7 +46,7 @@ function buildWorkouts(): Workout[] {
         prescribedWeight: parseWeightCell(row.weight, name),
         supersetGroup: notes.supersetLabel ?? undefined,
         notes: notes.freeNote ?? undefined,
-        media: { type: 'illustration', glyph: content.glyph },
+        media: buildMedia(id, content.glyph),
         form: content.form,
       }
       return exercise
@@ -61,6 +64,13 @@ function buildWorkouts(): Workout[] {
   }
 
   return workouts
+}
+
+function buildMedia(exerciseId: string, glyph: Exercise['media']['glyph']): ExerciseMedia {
+  const photo = getExercisePhoto(exerciseId)
+  if (!photo) return { type: 'illustration', glyph }
+  const [primary, alt] = photo.frames
+  return { type: 'photo', src: primary, srcAlt: alt, glyph }
 }
 
 function toPrescription(

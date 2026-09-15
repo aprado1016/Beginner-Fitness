@@ -41,12 +41,16 @@
   --c-warning-strong: 194 65 12;
   --c-disabled: 240 243 245;
 
-  /* Text */
+  /* Text — darkened slightly from the neutral-gray defaults so body copy still clears 4.5:1
+     against the most saturated corner of the pink page gradient (measured, not eyeballed). */
   --c-text-heading: 15 23 42;
-  --c-text-body: 71 85 105;
-  --c-text-body-subtle: 100 116 139;
+  --c-text-body: 51 65 85;
+  --c-text-body-subtle: 60 74 94;
   --c-fg-brand: 14 166 109;
   --c-fg-brand-strong: 8 122 78;
+  /* Darker still — for brand-colored text sitting directly on the page gradient rather than
+     on a glass card. Verified >= 4.5:1 against the gradient's most saturated pink stop. */
+  --c-fg-brand-emphasis: 7 83 54;
   --c-fg-disabled: 148 163 184;
 
   /* Borders */
@@ -55,14 +59,17 @@
   --c-border-light: 240 243 245;
   --c-border-brand: 14 166 109;
 
-  /* Glass surfaces */
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-bg-hover: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-border-subtle: rgba(0, 0, 0, 0.05);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(255, 255, 255, 0.15);
-  --glass-edge-top: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
-  --glass-edge-left: linear-gradient(180deg, rgba(255, 255, 255, 0.7), transparent, rgba(255, 255, 255, 0.2));
+  /* Glass surfaces — brighter, whiter frosted glass to read clearly over a colorful backdrop.
+     glass-border frames the card against the busy page gradient (light, so it reads as a frosted
+     edge); glass-border-subtle separates content *inside* an already-white card, so it stays a
+     dark, low-alpha line — a light one would be invisible against the card's own white fill. */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-hover: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-border-subtle: rgba(15, 23, 42, 0.08);
+  --glass-shadow: 0 8px 32px rgba(31, 41, 55, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  --glass-edge-top: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  --glass-edge-left: linear-gradient(180deg, rgba(255, 255, 255, 0.9), transparent, rgba(255, 255, 255, 0.3));
 
   /* Shadows */
   --shadow-2xs: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -73,7 +80,7 @@
   --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 
   /* Page background wash (subtle atmospheric gradient, brand-tinted) */
-  --page-bg: radial-gradient(120% 100% at 50% -10%, rgba(14, 166, 109, 0.08), transparent 60%), #ffffff;
+  --page-bg: linear-gradient(150deg, #ffa9d7 0%, #ffc9e6 18%, #fdf3f8 38%, #eafff5 62%, #a8f5cf 84%, #6be7ab 100%);
 
   --color-1-400: rgba(255, 255, 255, 0.3);
   --color-1-700: rgba(0, 0, 0, 0.08);
@@ -119,6 +126,7 @@
     --c-text-body-subtle: 148 163 184;
     --c-fg-brand: 138 255 196;
     --c-fg-brand-strong: 184 255 217;
+    --c-fg-brand-emphasis: 184 255 217;
     --c-fg-disabled: 100 116 139;
 
     --c-border-default: 15 23 42;
@@ -188,6 +196,7 @@
   --c-text-body-subtle: 148 163 184;
   --c-fg-brand: 138 255 196;
   --c-fg-brand-strong: 184 255 217;
+  --c-fg-brand-emphasis: 184 255 217;
   --c-fg-disabled: 100 116 139;
 
   --c-border-default: 15 23 42;
@@ -274,6 +283,29 @@ input {
   height: 100%;
   background: var(--glass-edge-left);
   pointer-events: none;
+}
+
+.exercise-photo-filter {
+  filter: saturate(0.85) contrast(1.02);
+}
+
+.exercise-photo-crossfade {
+  animation: exercisePhotoCrossfade 3.6s ease-in-out infinite;
+}
+
+@keyframes exercisePhotoCrossfade {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  45%,
+  67% {
+    opacity: 1;
+  }
+  95%,
+  100% {
+    opacity: 0;
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {

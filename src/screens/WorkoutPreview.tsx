@@ -43,7 +43,7 @@ export function WorkoutPreview() {
         <ChevronLeftIcon className="h-4 w-4" /> Back
       </button>
 
-      <p className="text-xs font-semibold uppercase tracking-wide text-fg-brand-strong">{workout.name}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-fg-brand-emphasis">{workout.name}</p>
       <h1 className="text-2xl font-semibold text-heading">{workout.focus}</h1>
       <div className="mt-2 flex flex-wrap gap-2">
         <Badge icon={<ClockIcon className="h-3 w-3" />}>Approx. {formatMinutes(workout.estimatedMinutes)}</Badge>

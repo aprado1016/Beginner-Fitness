@@ -100,7 +100,7 @@ export function ActiveWorkout() {
           <CloseIcon className="h-5 w-5" />
         </button>
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-wide text-fg-brand-strong">
+          <p className="text-xs font-semibold uppercase tracking-wide text-fg-brand-emphasis">
             {activeWorkout.name} — {activeWorkout.focus}
           </p>
           <p className="text-sm font-medium text-body-subtle">

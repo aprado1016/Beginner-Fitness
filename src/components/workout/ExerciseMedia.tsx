@@ -12,6 +12,26 @@ export function ExerciseMedia({ media, exerciseName, size = 'lg' }: ExerciseMedi
   const isCompact = size === 'md'
   const heightClass = isCompact ? 'aspect-square' : 'aspect-[4/3]'
 
+  if (media.type === 'photo' && media.src) {
+    return (
+      <div className={clsx('relative w-full overflow-hidden rounded-base bg-neutral-tertiary', heightClass)}>
+        <img
+          src={media.src}
+          alt={`Demonstration of ${exerciseName}`}
+          className="exercise-photo-filter h-full w-full object-cover object-top"
+        />
+        {media.srcAlt && (
+          <img
+            src={media.srcAlt}
+            alt=""
+            aria-hidden="true"
+            className="exercise-photo-filter exercise-photo-crossfade absolute inset-0 h-full w-full object-cover object-top"
+          />
+        )}
+      </div>
+    )
+  }
+
   if (media.type !== 'illustration' && media.src) {
     return (
       <div className={clsx('relative w-full overflow-hidden rounded-base bg-neutral-tertiary', heightClass)}>

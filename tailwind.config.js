@@ -50,6 +50,7 @@ export default {
         'body-subtle': 'rgb(var(--c-text-body-subtle) / <alpha-value>)',
         'fg-brand': 'rgb(var(--c-fg-brand) / <alpha-value>)',
         'fg-brand-strong': 'rgb(var(--c-fg-brand-strong) / <alpha-value>)',
+        'fg-brand-emphasis': 'rgb(var(--c-fg-brand-emphasis) / <alpha-value>)',
         'fg-disabled': 'rgb(var(--c-fg-disabled) / <alpha-value>)',
         border: {
           default: 'rgb(var(--c-border-default) / <alpha-value>)',

@@ -13,14 +13,16 @@ export interface ExercisePrescription {
   eachSide?: boolean
 }
 
-export type MediaType = 'illustration' | 'gif' | 'video' | 'image'
+export type MediaType = 'illustration' | 'photo' | 'gif' | 'video' | 'image'
 
 export interface ExerciseMedia {
   type: MediaType
   /** URL for the real asset. Left undefined until production media is sourced. */
   src?: string
+  /** Second frame, for a photo pair that crossfades to suggest motion (start <-> end position). */
+  srcAlt?: string
   poster?: string
-  /** Glyph key used by the built-in placeholder illustration renderer. */
+  /** Glyph key used by the built-in placeholder illustration renderer (fallback when no photo/video is set). */
   glyph: ExerciseGlyph
 }
 
