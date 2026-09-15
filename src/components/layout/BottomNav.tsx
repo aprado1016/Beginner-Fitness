@@ -13,7 +13,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[max(env(safe-area-inset-bottom,0px),1rem)]"
+      className="sticky bottom-0 z-40 flex justify-center px-4 pb-[max(env(safe-area-inset-bottom,0px),1rem)]"
     >
       <ul className="glass-edges flex items-stretch gap-1 rounded-full border border-glass bg-glass p-1.5 shadow-glass backdrop-blur-glass">
         {ITEMS.map(({ to, label, Icon, FilledIcon, end }) => (
