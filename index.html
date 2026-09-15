@@ -16,6 +16,9 @@
     <title>Fitness</title>
   </head>
   <body>
+    <!-- Real, static element (not a CSS ::before) so the fixed gradient backdrop is present in
+         the raw HTML from the first byte — no JS/React mount required before it can paint. -->
+    <div id="app-bg"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

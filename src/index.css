@@ -237,7 +237,6 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   color: rgb(var(--c-text-body));
   -webkit-font-smoothing: antialiased;
-  position: relative;
 }
 
 /* The page gradient lives ONLY here, on a position: fixed layer pinned to the viewport —
@@ -245,11 +244,12 @@ body {
    translates, so a background painted on them would bounce right along with the content,
    drifting out of sync with this fixed layer. Keeping it in one place means the gradient
    reads as a static backdrop: content and cards bounce freely over it, and it never runs out
-   no matter how far the bounce stretches. (background-attachment: fixed would achieve the same
-   pinning, but iOS Safari sometimes fails to paint that on the very first frame — a real fixed
-   element doesn't have that bug.) */
-body::before {
-  content: '';
+   no matter how far the bounce stretches. This is a real element declared directly in
+   index.html (not a CSS ::before) — generated pseudo-elements have been unreliable getting
+   promoted to their own compositor layer for position: fixed on the very first frame in iOS
+   Safari/WKWebView, which is exactly what left a gap between this layer and fixed chrome like
+   the bottom nav on cold load. A real, static DOM node doesn't have that timing gap. */
+#app-bg {
   position: fixed;
   inset: 0;
   z-index: -1;
