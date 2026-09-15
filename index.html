@@ -20,6 +20,20 @@
          the raw HTML from the first byte — no JS/React mount required before it can paint. -->
     <div id="app-bg"></div>
     <div id="root"></div>
+    <script>
+      // iOS WKWebView (both Safari and standalone/Home-Screen PWAs) initializes the viewport's
+      // safe-area/layout metrics on cold launch using a stale value, and only recomputes them
+      // once a scroll event actually fires — which is why position: fixed chrome (the bottom
+      // nav) and the safe-area padding around it visibly "snap" into their correct place the
+      // first time the page is scrolled. Firing an imperceptible 1px synthetic scroll on load
+      // forces that recalculation immediately, before the user ever has to scroll themselves.
+      window.addEventListener('pageshow', function () {
+        window.scrollTo(0, 1)
+        requestAnimationFrame(function () {
+          window.scrollTo(0, 0)
+        })
+      })
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
