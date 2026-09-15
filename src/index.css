@@ -236,7 +236,6 @@ body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   background: var(--page-bg);
-  background-attachment: fixed;
   color: rgb(var(--c-text-body));
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
