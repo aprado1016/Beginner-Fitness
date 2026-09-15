@@ -37,6 +37,13 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,jpg}'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         navigateFallback: `${base}index.html`,
+        // Without these, a newly-deployed service worker installs but sits "waiting" until
+        // every open tab for the origin is fully closed before it takes over — on iOS Safari
+        // tabs almost never count as fully closed, so updates could appear to never arrive.
+        // This makes a new SW activate and take control immediately instead.
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
       },
       devOptions: {
         enabled: false,
