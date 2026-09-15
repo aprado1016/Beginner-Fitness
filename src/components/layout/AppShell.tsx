@@ -26,9 +26,8 @@ export function AppShell() {
           // safe-area padding internally, so this wrapper adds none — doing so twice just
           // pushes content down for no reason.
           !isImmersive && 'pt-[max(env(safe-area-inset-top,0px),0px)]',
-          // The pill nav is a normal (sticky, not fixed) flow sibling now, so it already
-          // reserves its own space — no manual bottom padding needed here.
-          !isImmersive && 'pb-4',
+          // The pill nav is fixed (not in document flow), so reserve room for it here instead.
+          !isImmersive && 'pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]',
         )}
       >
         <Outlet />
