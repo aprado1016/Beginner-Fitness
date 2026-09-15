@@ -19,8 +19,12 @@ export default defineConfig({
         name: "Maggie's Fitness",
         short_name: 'Fitness',
         description: 'A simple, beautiful workout companion.',
-        theme_color: '#0B0F19',
-        background_color: '#0B0F19',
+        // Match the app's actual pink-to-green gradient (top-left stop), not the dark navy
+        // left over from the original template — this is what iOS uses to color the launch
+        // splash screen and the safe-area chrome around the app, so a mismatch here is exactly
+        // what shows up as a wrong-colored bar at the top/bottom of the screen.
+        theme_color: '#ffa9d7',
+        background_color: '#ffa9d7',
         display: 'standalone',
         orientation: 'portrait',
         // Relative to the manifest's own location, so this resolves correctly
