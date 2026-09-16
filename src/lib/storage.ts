@@ -14,7 +14,9 @@ export function defaultState(): AppState {
   return {
     version: CURRENT_VERSION,
     preferences: {
-      name: 'Maggie',
+      // Empty on a fresh install is what triggers the welcome screen — anyone who already has
+      // a saved name (including existing installs from before onboarding existed) skips it.
+      name: '',
       theme: 'system',
       soundEnabled: true,
       hapticsEnabled: true,
