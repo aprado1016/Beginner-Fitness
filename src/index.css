@@ -223,31 +223,20 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* --vh is measured directly in JS (see index.html) as the full real viewport height in px, kept
-   in sync on resize/orientation/pageshow. iOS WKWebView doesn't reliably resolve `dvh` to the
-   true visible viewport on a cold, non-scrolling page — short pages could end up sized against a
-   stale, smaller value, leaving a gap below fixed bottom chrome and an incompletely-covered
-   background until something (real overflow, a scroll) forced a recalculation. A JS-measured
-   pixel value has no such quirk; 100dvh is only a same-unit fallback for the instant before that
-   script runs (--vh already holds the full height, not 1% of it — no *100 here). */
 html {
-  height: var(--vh, 100dvh);
+  height: 100vh;
 }
 
 body {
-  min-height: var(--vh, 100dvh);
+  min-height: 100vh;
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   color: rgb(var(--c-text-body));
   -webkit-font-smoothing: antialiased;
   position: relative;
-  /* Fallback layer, painted directly on body (not fixed) — always sized to the real document,
-     since normal document flow height doesn't suffer from the position: fixed viewport-timing
-     quirk #app-bg below can hit. In the ordinary case this sits exactly under #app-bg and is
-     never seen. If #app-bg is ever a sliver short, this shows through in that gap: the same
-     gradient, not blank white. It does bounce/scroll with the document (unlike #app-bg), but
-     since it's normally fully hidden behind #app-bg's static layer, that only becomes visible
-     in the same edge-case gap it's there to cover — never as a second, competing background. */
+  /* Fallback layer, painted directly on body (not fixed) — always sized to the real document.
+     In the ordinary case this sits exactly under #app-bg and is never seen; it's a safety net
+     for #app-bg specifically, not the primary background. */
   background: var(--page-bg);
 }
 
@@ -255,19 +244,21 @@ body {
    CSS ::before: generated pseudo-elements have been unreliable getting promoted to their own
    compositor layer for position: fixed on the very first frame in iOS Safari/WKWebView), pinned
    to the viewport so content and cards can bounce freely over a backdrop that itself never
-   moves. Sits in front of (paints over) body's own fallback gradient above. */
+   moves. Sits in front of (paints over) body's own fallback gradient above.
+   inset: 0 (not an explicit width/height) is deliberate: with viewport-fit=cover, the browser's
+   own containing-block math for position: fixed already extends this under the safe areas
+   (notch, home indicator) correctly — a JS-measured window.innerHeight was tried here instead
+   and made things worse, because in an iOS standalone PWA that value can exclude the safe-area
+   insets entirely, undersizing this layer by exactly that much at the top and/or bottom. */
 #app-bg {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: var(--vh, 100dvh);
+  inset: 0;
   z-index: -1;
   background: var(--page-bg);
 }
 
 #root {
-  min-height: var(--vh, 100dvh);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }

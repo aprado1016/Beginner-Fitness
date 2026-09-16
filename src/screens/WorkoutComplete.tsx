@@ -33,7 +33,7 @@ export function WorkoutComplete() {
   const minutes = session.durationSeconds ? Math.max(1, Math.round(session.durationSeconds / 60)) : workout.estimatedMinutes
 
   return (
-    <div className="flex min-h-[var(--vh,100dvh)] flex-col items-center justify-center px-6 pb-[max(env(safe-area-inset-bottom,0px),1rem)] pt-[max(env(safe-area-inset-top,0px),1rem)]">
+    <div className="flex min-h-screen flex-col items-center justify-center px-6 pb-[max(env(safe-area-inset-bottom,0px),1rem)] pt-[max(env(safe-area-inset-top,0px),1rem)]">
       <div className="relative mb-2 flex h-24 w-24 items-center justify-center">
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-visible">
           {CONFETTI_COLORS.map((color, i) => (

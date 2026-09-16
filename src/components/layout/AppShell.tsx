@@ -11,7 +11,7 @@ export function AppShell() {
   const isImmersive = IMMERSIVE_PREFIXES.some((p) => location.pathname.startsWith(p))
 
   return (
-    <div className="mx-auto flex min-h-[var(--vh,100dvh)] w-full max-w-md flex-1 flex-col">
+    <div className="mx-auto flex min-h-screen w-full max-w-md flex-1 flex-col">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-[max(env(safe-area-inset-top,0px),0.75rem)] focus:z-50 focus:rounded-control focus:bg-brand focus:px-4 focus:py-2 focus:text-white"

@@ -3,25 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <script>
-      // iOS WKWebView (Safari and standalone/Home-Screen PWAs alike) doesn't reliably resolve
-      // dvh to the true visible viewport on a cold, non-scrolling page — it only seems to commit
-      // to the correct value once something (real overflow, a scroll) forces it. Measuring the
-      // real height in JS and exposing it as --vh sidesteps that entirely: this is always exact,
-      // regardless of any browser-internal viewport bookkeeping quirk. Runs in <head>, before
-      // body's layout, so nothing downstream ever sees the wrong value.
-      function setViewportHeightVar() {
-        var h = (window.visualViewport ? window.visualViewport.height : window.innerHeight)
-        document.documentElement.style.setProperty('--vh', h + 'px')
-      }
-      setViewportHeightVar()
-      window.addEventListener('resize', setViewportHeightVar)
-      window.addEventListener('orientationchange', setViewportHeightVar)
-      window.addEventListener('pageshow', setViewportHeightVar)
-      if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', setViewportHeightVar)
-      }
-    </script>
     <!-- Matches the app's actual gradient (light: pink top stop, dark: the CSS dark-mode
          --page-bg base), not the dark-navy/pure-white left over from the original template.
          iOS uses this to color the safe-area chrome around the app (status bar / home

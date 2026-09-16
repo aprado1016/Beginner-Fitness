@@ -153,7 +153,7 @@ export function ActiveWorkout() {
   }
 
   return (
-    <div className="animate-fade-in relative min-h-[var(--vh,100dvh)]">
+    <div className="animate-fade-in relative min-h-screen">
       {/* Fixed top stack: exit + set-completion progress + rest timer. Always visible, above scroll. */}
       <div ref={topStackRef} className="fixed inset-x-0 top-0 z-40">
         <div className="glass-edges border-b border-glass bg-glass backdrop-blur-glass">
