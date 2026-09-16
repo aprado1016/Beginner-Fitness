@@ -224,3 +224,13 @@ export function VibrateIcon(props: IconProps) {
     </svg>
   )
 }
+
+export function ShareIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 15V4" />
+      <path d="M8 7.5 12 3.5l4 4" />
+      <path d="M6 10h-.5A1.5 1.5 0 0 0 4 11.5v8A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 18.5 10H18" />
+    </svg>
+  )
+}
