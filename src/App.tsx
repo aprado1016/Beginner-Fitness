@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { SplashScreen } from '@/components/SplashScreen'
 import { Home } from '@/screens/Home'
 import { Welcome } from '@/screens/Welcome'
+import { InstallRequired } from '@/screens/InstallRequired'
 import { WorkoutLibrary } from '@/screens/WorkoutLibrary'
 import { WorkoutPreview } from '@/screens/WorkoutPreview'
 import { ActiveWorkout } from '@/screens/ActiveWorkout'
@@ -12,6 +13,7 @@ import { WorkoutComplete } from '@/screens/WorkoutComplete'
 import { ProgressScreen } from '@/screens/Progress'
 import { Settings } from '@/screens/Settings'
 import { AppStateProvider, useAppState } from '@/state/AppStateContext'
+import { isStandaloneDisplay } from '@/lib/platform'
 
 const SPLASH_DURATION_MS = 1100
 
@@ -56,6 +58,9 @@ function AppRoutes() {
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true)
+  // Checked once: standalone mode only changes by actually relaunching from the home screen
+  // icon, which reloads the page anyway — no need to watch for it changing live.
+  const [standalone] = useState(isStandaloneDisplay)
 
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -64,11 +69,19 @@ export default function App() {
   }, [])
 
   return (
-    <AppStateProvider>
-      <HashRouter>
-        <AppRoutes />
-      </HashRouter>
+    <>
+      {standalone ? (
+        <AppStateProvider>
+          <HashRouter>
+            <AppRoutes />
+          </HashRouter>
+        </AppStateProvider>
+      ) : (
+        // The app is meant to be used only once installed to the home screen — a regular
+        // browser tab gets nothing but these instructions, with no way to bypass them.
+        <InstallRequired />
+      )}
       <AnimatePresence>{showSplash && <SplashScreen key="splash" />}</AnimatePresence>
-    </AppStateProvider>
+    </>
   )
 }

@@ -4,7 +4,6 @@ import { WORKOUTS } from '@/data/workouts'
 import { getNextWorkout, wasCompletedToday } from '@/lib/workoutStats'
 import { formatMinutes, greetingForNow } from '@/lib/format'
 import { GlassCard, InteractiveGlassCard } from '@/components/ui/GlassCard'
-import { AddToHomeScreenBanner } from '@/components/ui/AddToHomeScreenBanner'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { ChevronRightIcon, ClockIcon, DumbbellIcon, GearIcon, TrophyIcon } from '@/components/icons'
@@ -40,8 +39,6 @@ export function Home() {
           <GearIcon className="h-5 w-5" />
         </button>
       </header>
-
-      <AddToHomeScreenBanner />
 
       <section aria-labelledby="todays-workout-heading">
         <h2 id="todays-workout-heading" className="mb-2.5 text-sm font-semibold uppercase tracking-wide text-body-subtle">
